@@ -2,10 +2,14 @@ version: '3.8'
 services:
   frontend:
     build: .
-    command: npm start
+    command: npm run start # Garanta que o comando correto seja passado
     ports:
-      - "3000:80"
+      - "3000:3000" # Mapeando a porta correta
     volumes:
-      - .:/usr/app
+      - .:/usr/app # Isso vai garantir que as mudanças sejam refletidas automaticamente
+    networks:
+      - laravel_network # Certifique-se de que o nome da rede esteja correto
+
 networks:
   laravel_network:
+    driver: bridge

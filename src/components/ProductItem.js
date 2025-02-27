@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Card, CardContent, Typography, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Box } from '@mui/material';
+import {
+    Button, Card, CardContent, Typography, Dialog,
+    DialogActions, DialogContent, DialogTitle, TextField,
+    Box
+} from '@mui/material';
 import api from '../services/api';
 import { NumericFormat } from 'react-number-format';
-
 
 function ProductItem({ product, onDelete }) {
     const [open, setOpen] = useState(false);
@@ -10,15 +13,35 @@ function ProductItem({ product, onDelete }) {
     const [descricao, setDescricao] = useState(product.descricao);
     const [preco, setPreco] = useState(product.preco);
 
+
     const handleEdit = async () => {
         try {
             await api.put(`/produtos/${product.id}`, { nome, descricao, preco });
             setOpen(false);
-            window.location.reload(); // Atualizar a lista de produtos
+            window.location.reload();
         } catch (error) {
             console.error('Erro ao editar produto:', error);
         }
     };
+
+    const handleDelete = async () => {
+        try {
+            const response = await api.delete(`/produtos/${product.id}`);
+
+            if (response.status === 200) {
+                onDelete(product.id); // Certifique-se de que esta função no componente pai chama handleProductDeleted
+            } else {
+                console.error("Erro ao excluir produto. Código de status:", response.status);
+                alert(`Erro ao excluir produto. Código de status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Erro ao excluir produto:", error.response ? error.response.data : error);
+            alert(`Erro ao excluir o produto: ${error.response ? error.response.data.message : error.message}`);
+        }
+    };
+
+
+
 
     return (
         <Card sx={{ marginBottom: 2, padding: 2, backgroundColor: '#f9f9f9', boxShadow: 3 }}>
@@ -33,7 +56,7 @@ function ProductItem({ product, onDelete }) {
                     R$ {product.preco}
                 </Typography>
                 <Box sx={{ marginTop: 2 }}>
-                    <Button color="error" onClick={() => onDelete(product.id)} sx={{ marginRight: 1 }}>
+                    <Button color="error" onClick={handleDelete} sx={{ marginRight: 1 }}>
                         Excluir
                     </Button>
                     <Button color="primary" onClick={() => setOpen(true)}>
@@ -72,6 +95,7 @@ function ProductItem({ product, onDelete }) {
                         style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
                         required
                     />
+
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpen(false)} color="secondary">

@@ -1,6 +1,5 @@
 import React from 'react';
 import ProductItem from './ProductItem';
-import api from '../services/api';
 import { Typography, Snackbar, Alert } from '@mui/material';
 import { useState } from 'react';
 
@@ -9,12 +8,11 @@ function ProductList({ products, onDelete, onEdit }) {
     const [error, setError] = useState('');
 
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (deletedProductId) => {
         try {
-            await api.delete(`/produtos/${id}`);
-            onDelete(id);
-            setMessage('Produto excluído com sucesso!');
+            onDelete(deletedProductId); // Atualiza a UI no componente pai
         } catch (error) {
+            console.error("Erro ao excluir produto:", error);
             setError('Erro ao excluir produto.');
         }
     };
@@ -29,10 +27,13 @@ function ProductList({ products, onDelete, onEdit }) {
             <Typography variant="h4" gutterBottom>
                 Lista de Produtos
             </Typography>
-            {products.map(product => (
-                <ProductItem key={product.id} product={product} onDelete={handleDelete} onEdit={handleEdit} />
-            ))}
-
+            {Array.isArray(products) && products.length > 0 ? (
+                products.map(product => (
+                    <ProductItem key={product.id} product={product} onDelete={handleDelete} onEdit={handleEdit} />
+                ))
+            ) : (
+                <Typography variant="body1">Nenhum produto encontrado.</Typography>
+            )}
             <Snackbar open={!!message} autoHideDuration={3000} onClose={() => setMessage('')}>
                 <Alert severity="success" onClose={() => setMessage('')}>{message}</Alert>
             </Snackbar>

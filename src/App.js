@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import ProductList from './components/ProductList';
 import ProductForm from './components/ProductForm';
 import { AppBar, Toolbar, Typography, Container, Button, Box, Snackbar, Alert } from '@mui/material';
 import api from './services/api';
 import './App.css';
-
+import FilteredProductList from './components/FilteredProductList';
 
 function App() {
   const [products, setProducts] = useState([]);
   const [showProductList, setShowProductList] = useState(true);
   const [successMessage, setSuccessMessage] = useState('');
+
 
   const fetchProducts = async () => {
     try {
@@ -19,6 +19,8 @@ function App() {
       console.error('Erro ao carregar produtos:', error);
     }
   };
+
+
 
   useEffect(() => {
     fetchProducts();
@@ -30,6 +32,12 @@ function App() {
     setSuccessMessage('Produto criado com sucesso!');
   };
 
+  const handleProductDeleted = (deletedProductId) => {
+    setProducts((prevProducts) => prevProducts.filter(product => product.id !== deletedProductId));
+    setShowProductList(true);
+    setSuccessMessage('Produto excluído com sucesso!');
+  };
+
   const handleProductUpdated = (updatedProduct) => {
     setProducts((prevProducts) =>
       prevProducts.map((product) =>
@@ -39,8 +47,8 @@ function App() {
     setSuccessMessage('Produto editado com sucesso!');
   };
 
-  const handleProductDeleted = (id) => {
-    setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+  const handleProductSaved = () => {
+    console.log("Produto salvo com sucesso!");
   };
 
 
@@ -59,14 +67,18 @@ function App() {
             <Button variant="contained" color="primary" onClick={() => setShowProductList(false)} sx={{ marginBottom: 2 }}>
               Criar Novo Produto
             </Button>
-            <ProductList products={products} onDelete={handleProductDeleted} onEdit={handleProductUpdated} />
+
+
+
+            <FilteredProductList products={products} onDelete={handleProductDeleted} onEdit={handleProductUpdated} />
+
           </Box>
         ) : (
           <Box>
             <Button variant="contained" color="secondary" onClick={() => setShowProductList(true)} sx={{ marginBottom: 2 }}>
               Visualizar Produtos
             </Button>
-            <ProductForm onProductCreated={handleProductCreated} onProductUpdated={handleProductUpdated} />
+            <ProductForm onProductCreated={handleProductCreated} onProductUpdated={handleProductUpdated} onProductSaved={handleProductSaved} />
           </Box>
         )}
         <Snackbar
@@ -81,8 +93,6 @@ function App() {
       </Container>
     </div>
   );
-
-
 }
 
 export default App;
