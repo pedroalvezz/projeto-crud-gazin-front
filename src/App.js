@@ -5,6 +5,8 @@ import api from './services/api';
 import './App.css';
 import FilteredProductList from './components/FilteredProductList';
 
+
+
 function App() {
   const [products, setProducts] = useState([]);
   const [showProductList, setShowProductList] = useState(true);
@@ -21,7 +23,6 @@ function App() {
   };
 
 
-
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -35,7 +36,6 @@ function App() {
   const handleProductDeleted = (deletedProductId) => {
     setProducts((prevProducts) => prevProducts.filter(product => product.id !== deletedProductId));
     setShowProductList(true);
-    setSuccessMessage('Produto excluído com sucesso!');
   };
 
   const handleProductUpdated = (updatedProduct) => {
@@ -54,6 +54,7 @@ function App() {
 
   return (
     <div>
+
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -61,14 +62,14 @@ function App() {
           </Typography>
         </Toolbar>
       </AppBar>
+
       <Container sx={{ marginTop: 4 }}>
+
         {showProductList ? (
           <Box>
             <Button variant="contained" color="primary" onClick={() => setShowProductList(false)} sx={{ marginBottom: 2 }}>
               Criar Novo Produto
             </Button>
-
-
 
             <FilteredProductList products={products} onDelete={handleProductDeleted} onEdit={handleProductUpdated} />
 
@@ -91,6 +92,7 @@ function App() {
           </Alert>
         </Snackbar>
       </Container>
+
     </div>
   );
 }

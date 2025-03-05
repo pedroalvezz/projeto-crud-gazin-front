@@ -10,6 +10,8 @@ function ProductForm({ produto, onProductSaved }) {
     const [successMessage, setSuccessMessage] = useState('');
 
 
+
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -86,6 +88,7 @@ function ProductForm({ produto, onProductSaved }) {
                     required
                 />
 
+
                 <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
                     {produto ? 'Atualizar Produto' : 'Salvar Produto'}
                 </Button>
@@ -96,6 +99,8 @@ function ProductForm({ produto, onProductSaved }) {
                     {successMessage}
                 </Alert>
             </Snackbar>
+
+
         </Box>
     );
 }

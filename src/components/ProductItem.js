@@ -4,14 +4,59 @@ import {
     DialogActions, DialogContent, DialogTitle, TextField,
     Box
 } from '@mui/material';
-import api from '../services/api';
+import api, { updateProductQuantity } from '../services/api';
+import { removeProductQuantity, } from '../services/api';
 import { NumericFormat } from 'react-number-format';
 
-function ProductItem({ product, onDelete }) {
+
+function ProductItem({ product, onDelete, onUpdate }) {
     const [open, setOpen] = useState(false);
     const [nome, setNome] = useState(product.nome);
     const [descricao, setDescricao] = useState(product.descricao);
-    const [preco, setPreco] = useState(product.preco);
+    const [preco, setPreco,] = useState(product.preco);
+    const [quantidade, setQuantidade] = useState(product.quantidade || 1);
+
+
+    const handleIncreaseQuantity = async () => {
+
+        try {
+            const updatedProduct = await updateProductQuantity(product.id, 1);
+            onUpdate(updatedProduct.product);
+        } catch (error) {
+            console.error("Erro ao atualizar quantidade:", error);
+        }
+        await updateProductQuantity(product.id); // Chama a API para adicionar
+        const novaQuantidade = quantidade + 1;
+
+        setQuantidade(novaQuantidade); // Atualiza a quantidade localmente
+        // Atualiza o preço total localmente
+
+        // Se necessário, faça também a atualização no backend
+
+    };
+
+    const handleRemove = async () => {
+
+        await removeProductQuantity(product.id);
+        if (typeof atualizarProdutos === 'function') {
+            // 🔥 Certifique-se de chamar apenas se for uma função
+        } else {
+            console.error('atualizarProdutos não é uma função',);
+        }
+
+        if (quantidade > 0) {
+
+            await removeProductQuantity(product.id); // Chama a API para remover
+            const novaQuantidade = quantidade - 1;
+
+
+            setQuantidade(novaQuantidade); // Atualiza a quantidade localmente
+            // Atualiza o preço total localmente
+
+            // Se necessário, faça também a atualização no backend
+
+        }
+    };
 
 
     const handleEdit = async () => {
@@ -26,10 +71,11 @@ function ProductItem({ product, onDelete }) {
 
     const handleDelete = async () => {
         try {
+            console.log("onDelete no ProductItem:", onDelete);
             const response = await api.delete(`/produtos/${product.id}`);
 
             if (response.status === 200) {
-                onDelete(product.id); // Certifique-se de que esta função no componente pai chama handleProductDeleted
+                onDelete(product.id);
             } else {
                 console.error("Erro ao excluir produto. Código de status:", response.status);
                 alert(`Erro ao excluir produto. Código de status: ${response.status}`);
@@ -106,7 +152,30 @@ function ProductItem({ product, onDelete }) {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Card sx={{ maxWidth: 1200, m: 2, boxShadow: 3, borderRadius: 2 }}>
+                <CardContent>
+                    <Typography variant="body1">
+                        <strong>Quantidade:</strong> {quantidade}
+                    </Typography>
+                    <Typography variant="h6" sx={{ mt: 1, color: "primary.main" }}>
+                        <strong>Total: R${(product?.preco || 0) * quantidade}</strong>
+                    </Typography>
+                    <Box sx={{ mt: 1, display: "flex", justifyContent: "center" }}>
+                        <Button variant="contained" color="primary" onClick={handleIncreaseQuantity}>
+                            Adicionar Unidade
+                        </Button>
+                    </Box>
+                    <Box sx={{ mt: 1, display: "flex", justifyContent: "center", }}>
+                        <Button variant="contained" color="primary" onClick={handleRemove} disabled={product.quantidade <= 0}>
+                            Remover  Unidade
+                        </Button>
+                    </Box>
+                </CardContent>
+            </Card>
+
         </Card>
+
     );
 }
 
