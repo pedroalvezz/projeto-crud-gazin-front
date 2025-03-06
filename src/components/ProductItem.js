@@ -2,53 +2,49 @@ import React, { useState } from 'react';
 import {
     Button, Card, CardContent, Typography, Dialog,
     DialogActions, DialogContent, DialogTitle, TextField,
-    Box
+    Box, Snackbar, Alert
 } from '@mui/material';
-import api, { updateProductQuantity } from '../services/api';
-import { removeProductQuantity, } from '../services/api';
+import api, { updateProductQuantity, removeProductQuantity } from '../services/api';
 import { NumericFormat } from 'react-number-format';
 
-
-function ProductItem({ product, onDelete, }) {
+function ProductItem({ product, onDelete }) {
     const [open, setOpen] = useState(false);
     const [nome, setNome] = useState(product.nome);
     const [descricao, setDescricao] = useState(product.descricao);
-    const [preco, setPreco,] = useState(product.preco);
+    const [preco, setPreco] = useState(product.preco);
     const [quantidade, setQuantidade] = useState(product.quantidade || 1);
 
 
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
     const handleIncreaseQuantity = async () => {
+        const unidadesAdicionar = 1;
 
         try {
-            await updateProductQuantity(product.id, 1);
-            window.location.reload(); // Recarrega a página
+
+            await updateProductQuantity(product.id, unidadesAdicionar);
+            setQuantidade(prevQuantidade => prevQuantidade + unidadesAdicionar);
+
+            setSnackbarMessage(`Adicionadas ${unidadesAdicionar} unidade(s) de ${product.nome}!`);
+            setSnackbarOpen(true);
         } catch (error) {
             console.error("Erro ao atualizar quantidade:", error);
         }
-
-        const novaQuantidade = quantidade + 1;
-
-        setQuantidade(novaQuantidade);
-
-
     };
 
     const handleRemove = async () => {
         if (quantidade > 0) {
             try {
                 await removeProductQuantity(product.id);
-                window.location.reload(); // Recarrega a página
+                setQuantidade(prevQuantidade => prevQuantidade - 1);
+                setSnackbarMessage(`Removida 1 unidade de ${product.nome}!`);
+                setSnackbarOpen(true);
             } catch (error) {
                 console.error("Erro ao remover quantidade:", error);
             }
-            const novaQuantidade = quantidade - 1;
-
-
-            setQuantidade(novaQuantidade);
-
         }
     };
-
 
     const handleEdit = async () => {
         try {
@@ -62,23 +58,18 @@ function ProductItem({ product, onDelete, }) {
 
     const handleDelete = async () => {
         try {
-            console.log("onDelete no ProductItem:", onDelete);
             const response = await api.delete(`/produtos/${product.id}`);
-
             if (response.status === 200) {
                 onDelete(product.id);
             } else {
-                console.error("Erro ao excluir produto. Código de status:", response.status);
+                console.error("Erro ao excluir produto:", response.status);
                 alert(`Erro ao excluir produto. Código de status: ${response.status}`);
             }
         } catch (error) {
-            console.error("Erro ao excluir produto:", error.response ? error.response.data : error);
-            alert(`Erro ao excluir o produto: ${error.response ? error.response.data.message : error.message}`);
+            console.error("Erro ao excluir produto:", error);
+            alert(`Erro ao excluir o produto: ${error.message}`);
         }
     };
-
-
-
 
     return (
         <Card sx={{ marginBottom: 2, padding: 2, backgroundColor: '#f9f9f9', boxShadow: 3 }}>
@@ -132,7 +123,6 @@ function ProductItem({ product, onDelete, }) {
                         style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
                         required
                     />
-
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpen(false)} color="secondary">
@@ -157,16 +147,25 @@ function ProductItem({ product, onDelete, }) {
                             Adicionar Unidade
                         </Button>
                     </Box>
-                    <Box sx={{ mt: 1, display: "flex", justifyContent: "center", }}>
-                        <Button variant="contained" color="primary" onClick={handleRemove} disabled={product.quantidade <= 0}>
-                            Remover  Unidade
+                    <Box sx={{ mt: 1, display: "flex", justifyContent: "center" }}>
+                        <Button variant="contained" color="primary" onClick={handleRemove} disabled={quantidade <= 0}>
+                            Remover Unidade
                         </Button>
                     </Box>
                 </CardContent>
             </Card>
 
+            {/* Snackbar para exibir mensagens */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+            >
+                <Alert severity="success" onClose={() => setSnackbarOpen(false)}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Card>
-
     );
 }
 
