@@ -9,7 +9,7 @@ import { removeProductQuantity, } from '../services/api';
 import { NumericFormat } from 'react-number-format';
 
 
-function ProductItem({ product, onDelete, onUpdate }) {
+function ProductItem({ product, onDelete, }) {
     const [open, setOpen] = useState(false);
     const [nome, setNome] = useState(product.nome);
     const [descricao, setDescricao] = useState(product.descricao);
@@ -20,40 +20,31 @@ function ProductItem({ product, onDelete, onUpdate }) {
     const handleIncreaseQuantity = async () => {
 
         try {
-            const updatedProduct = await updateProductQuantity(product.id, 1);
-            onUpdate(updatedProduct.product);
+            await updateProductQuantity(product.id, 1);
+            window.location.reload(); // Recarrega a página
         } catch (error) {
             console.error("Erro ao atualizar quantidade:", error);
         }
-        await updateProductQuantity(product.id); // Chama a API para adicionar
+
         const novaQuantidade = quantidade + 1;
 
-        setQuantidade(novaQuantidade); // Atualiza a quantidade localmente
-        // Atualiza o preço total localmente
+        setQuantidade(novaQuantidade);
 
-        // Se necessário, faça também a atualização no backend
 
     };
 
     const handleRemove = async () => {
-
-        await removeProductQuantity(product.id);
-        if (typeof atualizarProdutos === 'function') {
-            // 🔥 Certifique-se de chamar apenas se for uma função
-        } else {
-            console.error('atualizarProdutos não é uma função',);
-        }
-
         if (quantidade > 0) {
-
-            await removeProductQuantity(product.id); // Chama a API para remover
+            try {
+                await removeProductQuantity(product.id);
+                window.location.reload(); // Recarrega a página
+            } catch (error) {
+                console.error("Erro ao remover quantidade:", error);
+            }
             const novaQuantidade = quantidade - 1;
 
 
-            setQuantidade(novaQuantidade); // Atualiza a quantidade localmente
-            // Atualiza o preço total localmente
-
-            // Se necessário, faça também a atualização no backend
+            setQuantidade(novaQuantidade);
 
         }
     };
