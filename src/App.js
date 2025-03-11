@@ -4,14 +4,15 @@ import { AppBar, Toolbar, Typography, Container, Button, Box, Snackbar, Alert } 
 import api from './services/api';
 import './App.css';
 import FilteredProductList from './components/FilteredProductList';
-
-
+import { useAppThemeContext } from './components/contexts/ThemeContext';
 
 function App() {
   const [products, setProducts] = useState([]);
   const [showProductList, setShowProductList] = useState(true);
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Hook para acessar o contexto de tema
+  const { toggleTheme } = useAppThemeContext();
 
   const fetchProducts = async () => {
     try {
@@ -21,7 +22,6 @@ function App() {
       console.error('Erro ao carregar produtos:', error);
     }
   };
-
 
   useEffect(() => {
     fetchProducts();
@@ -47,39 +47,49 @@ function App() {
     setSuccessMessage('Produto editado com sucesso!');
   };
 
-  const handleProductSaved = () => {
-    console.log("Produto salvo com sucesso!");
-  };
-
-
   return (
     <div>
-
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             CRUD de Produtos
           </Typography>
+          {/* Adicionando o botão para alternar tema */}
+          <Button
+            variant="contained"
+            color="default"
+            onClick={toggleTheme}
+            sx={{ marginLeft: 'auto' }}
+          >
+            Alternar Tema
+          </Button>
         </Toolbar>
       </AppBar>
 
       <Container sx={{ marginTop: 4 }}>
-
         {showProductList ? (
           <Box>
-            <Button variant="contained" color="primary" onClick={() => setShowProductList(false)} sx={{ marginBottom: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setShowProductList(false)}
+              sx={{ marginBottom: 2 }}
+            >
               Criar Novo Produto
             </Button>
-
             <FilteredProductList products={products} onDelete={handleProductDeleted} onEdit={handleProductUpdated} />
-
           </Box>
         ) : (
           <Box>
-            <Button variant="contained" color="secondary" onClick={() => setShowProductList(true)} sx={{ marginBottom: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setShowProductList(true)}
+              sx={{ marginBottom: 2 }}
+            >
               Visualizar Produtos
             </Button>
-            <ProductForm onProductCreated={handleProductCreated} onProductUpdated={handleProductUpdated} onProductSaved={handleProductSaved} />
+            <ProductForm onProductCreated={handleProductCreated} onProductUpdated={handleProductUpdated} />
           </Box>
         )}
         <Snackbar
@@ -87,12 +97,11 @@ function App() {
           autoHideDuration={3000}
           onClose={() => setSuccessMessage('')}
         >
-          <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{ width: '100%' }}>
+          <Alert severity="success" onClose={() => setSuccessMessage('')} sx={{ width: '100%' }}>
             {successMessage}
           </Alert>
         </Snackbar>
       </Container>
-
     </div>
   );
 }

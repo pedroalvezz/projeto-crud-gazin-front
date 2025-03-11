@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
     Button, Card, CardContent, Typography, Dialog,
     DialogActions, DialogContent, DialogTitle, TextField,
-    Box, Snackbar, Alert
+    Box, Snackbar, Alert,
 } from '@mui/material';
 import api, { updateProductQuantity, removeProductQuantity } from '../services/api';
 import { NumericFormat } from 'react-number-format';
@@ -18,11 +18,11 @@ function ProductItem({ product, onDelete }) {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
 
+
     const handleIncreaseQuantity = async () => {
         const unidadesAdicionar = 1;
 
         try {
-
             await updateProductQuantity(product.id, unidadesAdicionar);
             setQuantidade(prevQuantidade => prevQuantidade + unidadesAdicionar);
 
@@ -48,7 +48,7 @@ function ProductItem({ product, onDelete }) {
 
     const handleEdit = async () => {
         try {
-            await api.put(`/produtos/${product.id}`, { nome, descricao, preco });
+            await api.put(`/produtos/${product.id}`, { nome, descricao, preco, });
             setOpen(false);
             window.location.reload();
         } catch (error) {
@@ -72,7 +72,7 @@ function ProductItem({ product, onDelete }) {
     };
 
     return (
-        <Card sx={{ marginBottom: 2, padding: 2, backgroundColor: '#f9f9f9', boxShadow: 3 }}>
+        <Card sx={{ marginBottom: 2, padding: 2, boxShadow: 3 }}>
             <CardContent>
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                     {product.nome}
@@ -83,6 +83,7 @@ function ProductItem({ product, onDelete }) {
                 <Typography variant="h5" color="primary">
                     R$ {product.preco}
                 </Typography>
+
                 <Box sx={{ marginTop: 2 }}>
                     <Button color="error" onClick={handleDelete} sx={{ marginRight: 1 }}>
                         Excluir
@@ -120,9 +121,13 @@ function ProductItem({ product, onDelete }) {
                         fixedDecimalScale
                         onValueChange={(values) => setPreco(values.value)}
                         placeholder="Preço"
-                        style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+                        customInput={TextField} // Usa o TextField do MUI
+                        fullWidth
                         required
+                        variant="outlined" // Ou "filled", "standard" dependendo do estilo que deseja
                     />
+
+
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpen(false)} color="secondary">

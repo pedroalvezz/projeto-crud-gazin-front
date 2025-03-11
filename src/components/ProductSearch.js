@@ -16,8 +16,13 @@ const ProductSearch = ({ onSearch }) => {
                 size="small"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                sx={{
+                    bgcolor: 'background.paper',
+                    borderRadius: 2,
+                    input: { color: 'text.primary' }, // Altera a cor do texto digitado
+                }}
             />
-            <Button variant="contained" color="primary" onClick={handleSearch}>
+            <Button variant="contained" color="primary" onClick={handleSearch} >
                 Buscar
             </Button>
         </div>

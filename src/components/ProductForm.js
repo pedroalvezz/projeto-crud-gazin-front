@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
-import { TextField, Button, Box, Typography, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Box, Typography, Snackbar, Alert, } from '@mui/material';
 import { NumericFormat } from 'react-number-format';
 
 function ProductForm({ produto, onProductSaved }) {
@@ -8,8 +8,6 @@ function ProductForm({ produto, onProductSaved }) {
     const [descricao, setDescricao] = useState(produto ? produto.descricao : '');
     const [preco, setPreco] = useState(produto ? produto.preco : '');
     const [successMessage, setSuccessMessage] = useState('');
-
-
 
 
     const handleSubmit = async (event) => {
@@ -54,7 +52,7 @@ function ProductForm({ produto, onProductSaved }) {
 
     return (
         <Box sx={{ marginBottom: 4 }}>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" gutterBottom sx={{ color: 'text.primary' }}>
                 {produto ? 'Editar Produto' : 'Adicionar Produto'}
             </Typography>
             <form onSubmit={handleSubmit}>
@@ -65,7 +63,11 @@ function ProductForm({ produto, onProductSaved }) {
                     fullWidth
                     margin="normal"
                     required
-                    sx={{ backgroundColor: '#fff' }}
+                    sx={{
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        input: { color: 'text.primary' }, // Altera a cor do texto digitado
+                    }}
                 />
                 <TextField
                     label="Descrição"
@@ -73,7 +75,11 @@ function ProductForm({ produto, onProductSaved }) {
                     onChange={(e) => setDescricao(e.target.value)}
                     fullWidth
                     margin="normal"
-                    sx={{ backgroundColor: '#fff' }}
+                    sx={{
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        input: { color: 'text.primary' }, // Altera a cor do texto digitado
+                    }}
                 />
                 <NumericFormat
                     value={preco}
@@ -84,9 +90,13 @@ function ProductForm({ produto, onProductSaved }) {
                     fixedDecimalScale
                     onValueChange={(values) => setPreco(values.value)}
                     placeholder="Preço"
-                    style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+                    customInput={TextField} // Usa o TextField do MUI
+                    fullWidth
                     required
+                    variant="outlined" // Ou "filled", "standard" dependendo do estilo que deseja
                 />
+
+
 
 
                 <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>

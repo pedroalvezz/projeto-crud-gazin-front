@@ -9,7 +9,7 @@ function ProductList({ products, onDelete, onEdit }) {
     const [maxPrice, setMaxPrice] = useState('');
 
 
-    const handleDelete = async (deletedProductId) => {
+    const handleDelete = (deletedProductId) => {
         try {
             onDelete(deletedProductId);
         } catch (error) {
@@ -51,6 +51,11 @@ function ProductList({ products, onDelete, onEdit }) {
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
                     style={{ marginRight: '10px' }}
+                    sx={{
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        input: { color: 'text.primary' }, // Altera a cor do texto digitado
+                    }}
                 />
                 <TextField
                     label="Preço Máximo"
@@ -58,17 +63,22 @@ function ProductList({ products, onDelete, onEdit }) {
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
                     style={{ marginRight: '10px' }}
+                    sx={{
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        input: { color: 'text.primary' }, // Altera a cor do texto digitado
+                    }}
                 />
             </div>
-            <Typography variant="h4" gutterBottom>
-                Lista de Produtos
+            <Typography variant="h4" sx={{ color: 'text.primary' }}>
+                Lista de <span style={{ color: 'text.secondary' }}>Produtos</span>
             </Typography>
             {filteredProducts.length > 0 ? (
                 filteredProducts.map(product => (
                     <ProductItem key={product.id} product={product} onDelete={handleDelete} onEdit={handleEdit} />
                 ))
             ) : (
-                <Typography variant="body1">Nenhum produto encontrado.</Typography>
+                <Typography variant="body1" >Nenhum produto encontrado.</Typography>
             )}
 
             <Snackbar open={!!message} autoHideDuration={3000} onClose={() => setMessage('')}>

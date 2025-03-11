@@ -18,7 +18,7 @@ const FilteredProductList = () => {
 
 
     const handleDelete = (deletedProductId) => {
-        console.log("🗑️ Removendo produto ID:", deletedProductId);
+        console.log("Removendo produto ID:", deletedProductId);
         setProducts(prevProducts => prevProducts.filter(prod => prod.id !== deletedProductId));
 
         setSuccessMessage('Produto excluído com sucesso!');
@@ -31,7 +31,6 @@ const FilteredProductList = () => {
             <ProductSearch onSearch={setSearch} />
             <ProductList products={products} onDelete={handleDelete} setProdutos={setProducts}
             />
-
 
             <Snackbar
                 open={!!successMessage}
