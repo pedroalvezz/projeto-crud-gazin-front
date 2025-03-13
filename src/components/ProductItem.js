@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import {
     Button, Card, CardContent, Typography, Dialog,
     DialogActions, DialogContent, DialogTitle, TextField,
-    Box, Snackbar, Alert,
+    Box, Snackbar, Alert, IconButton, Tooltip
 } from '@mui/material';
 import api, { updateProductQuantity, removeProductQuantity } from '../services/api';
 import { NumericFormat } from 'react-number-format';
+import { AddCircle, Delete, Edit, RemoveCircle } from "@mui/icons-material";
+import { useTheme } from '@mui/material/styles';
+
 
 function ProductItem({ product, onDelete }) {
     const [open, setOpen] = useState(false);
@@ -13,6 +16,7 @@ function ProductItem({ product, onDelete }) {
     const [descricao, setDescricao] = useState(product.descricao);
     const [preco, setPreco] = useState(product.preco);
     const [quantidade, setQuantidade] = useState(product.quantidade || 1);
+    const theme = useTheme();
 
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -84,13 +88,50 @@ function ProductItem({ product, onDelete }) {
                     R$ {product.preco}
                 </Typography>
 
-                <Box sx={{ marginTop: 2 }}>
-                    <Button color="error" onClick={handleDelete} sx={{ marginRight: 1 }}>
-                        Excluir
-                    </Button>
-                    <Button color="primary" onClick={() => setOpen(true)}>
-                        Editar
-                    </Button>
+                <Box sx={{ marginTop: 2, display: "flex", gap: 1 }}>
+                    {/* Botão de Excluir */}
+                    <Tooltip title="Excluir" arrow>
+                        <IconButton
+                            color="error"
+                            onClick={handleDelete}
+                            sx={{
+                                backgroundColor: theme.palette.mode === 'dark'
+                                    ? "rgba(0, 0, 0, 0.4)"  // Cor de fundo para tema escuro
+                                    : "rgba(0, 0, 0, 0.1)",  // Cor de fundo para tema claro
+                                borderRadius: "16px",
+                                padding: "10px",
+                                "&:hover": {
+                                    backgroundColor: theme.palette.mode === 'dark'
+                                        ? "rgba(255, 100, 100, 0.2)"
+                                        : "rgba(255, 100, 100, 0.1)", // Efeito de hover para tema claro
+                                },
+                            }}
+                        >
+                            <Delete fontSize="large" />
+                        </IconButton>
+                    </Tooltip>
+
+                    {/* Botão de Editar */}
+                    <Tooltip title="Editar" arrow>
+                        <IconButton
+                            color="primary"
+                            onClick={() => setOpen(true)}
+                            sx={{
+                                backgroundColor: theme.palette.mode === 'dark'
+                                    ? "rgba(0, 0, 0, 0.4)"
+                                    : "rgba(0, 0, 0, 0.1)",  // Cor de fundo para tema claro
+                                borderRadius: "16px",
+                                padding: "10px",
+                                "&:hover": {
+                                    backgroundColor: theme.palette.mode === 'dark'
+                                        ? "rgba(255, 223, 100, 0.2)"
+                                        : "rgba(255, 223, 100, 0.1)", // Efeito de hover para tema claro
+                                },
+                            }}
+                        >
+                            <Edit fontSize="large" />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
             </CardContent>
 
@@ -147,15 +188,21 @@ function ProductItem({ product, onDelete }) {
                     <Typography variant="h6" sx={{ mt: 1, color: "primary.main" }}>
                         <strong>Total: R${(product?.preco || 0) * quantidade}</strong>
                     </Typography>
-                    <Box sx={{ mt: 1, display: "flex", justifyContent: "center" }}>
-                        <Button variant="contained" color="primary" onClick={handleIncreaseQuantity}>
-                            Adicionar Unidade
-                        </Button>
-                    </Box>
-                    <Box sx={{ mt: 1, display: "flex", justifyContent: "center" }}>
-                        <Button variant="contained" color="primary" onClick={handleRemove} disabled={quantidade <= 0}>
-                            Remover Unidade
-                        </Button>
+                    <Box sx={{ mt: 1, display: "flex", justifyContent: "center", gap: 2 }}>
+
+                        {/* Botão de Remover */}
+                        <Tooltip title="Remover Unidade" arrow>
+                            <IconButton color="secondary" onClick={handleRemove} disabled={quantidade <= 0}>
+                                <RemoveCircle fontSize="large" />
+                            </IconButton>
+                        </Tooltip>
+
+                        {/* Botão de Adicionar */}
+                        <Tooltip title="Adicionar Unidade" arrow>
+                            <IconButton color="primary" onClick={handleIncreaseQuantity}>
+                                <AddCircle fontSize="large" />
+                            </IconButton>
+                        </Tooltip>
                     </Box>
                 </CardContent>
             </Card>

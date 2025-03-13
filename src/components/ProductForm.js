@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import api from '../services/api';
 import { TextField, Button, Box, Typography, Snackbar, Alert, } from '@mui/material';
 import { NumericFormat } from 'react-number-format';
+import { Save, Update } from "@mui/icons-material";
 
 function ProductForm({ produto, onProductSaved }) {
     const [nome, setNome] = useState(produto ? produto.nome : '');
@@ -98,9 +99,14 @@ function ProductForm({ produto, onProductSaved }) {
 
 
 
-
-                <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
-                    {produto ? 'Atualizar Produto' : 'Salvar Produto'}
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{ marginTop: 2 }}
+                    startIcon={produto ? <Update /> : <Save />} // Ícone muda conforme ação
+                >
+                    {produto ? "Atualizar Produto" : "Salvar Produto"}
                 </Button>
             </form>
 
